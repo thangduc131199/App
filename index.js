@@ -26,8 +26,8 @@ io.on('connection', (socket) => {
     console.log('New user connected');
     setInterval(() => {
         let [x, y] = startPoint;
-        x += 0.0001;
-        y += 0.0001;
+        x += 0.00001;
+        y += 0.00001;
         startPoint = [parseFloat(x.toFixed(7)), parseFloat(y.toFixed(7))];
         console.log(startPoint);
         io.sockets.emit('new_location', {nextPoint: startPoint});
