@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+</head>
+
+<body>
+    <h1 class="name_app">APP</h1>
+    <fieldset class="field">
+        <label class="port" for="cars">Port:</label>
+        <select id="port" name="port">
+            <option value="COM1">COM1</option>
+            <option value="COM2">COM2</option>
+            <option value="COM3">COM3</option>
+            <option value="COM4">COM4</option>
+        </select>
+        <label class="baudrate" for="">BaudRate:</label>
+        <select id="baudrate" name="baudrate">
+            <option value="9600">9600</option>
+            <option value="112500">112500</option>
+        </select>
+        <input id="bt_connect" type="button" value="Connect">
+    </fieldset>
+    <div id="map" class="map">
+        <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"
+            integrity="sha384-7EyYLQZgWBi67fBtVxw60/OWl1kjsfrPFcaU0pp0nAh+i8FD068QogUvg85Ewy1k"
+            crossorigin="anonymous"></script>
+        <script>
+            var socket = io.connect('http://localhost:4000');
+            // initialize Leaflet
+            var map = L.map('map').setView({ lon: 103.957908, lat: 22.4978735 }, 18);
+
+            // add the OpenStreetMap tiles
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+            }).addTo(map);
+
+            // show the scale bar on the lower left corner
+            L.control.scale({ imperial: true, metric: true }).addTo(map);
+
+            // show a marker on the map
+            const startPoint = L.marker({ lon: 103.957908, lat: 22.4978735 }).bindPopup('Robot').addTo(map);
+            let targetPoint = L.marker({ lon: 103.957908, lat: 22.4978735 }).bindPopup('Robot1').addTo(map);
+            // var polygon = L.polygon([
+            //     [22.4978734, 103.957908],
+            //     [22.4978744, 103.957908],
+            //     [22.4978754, 103.957908]
+            // ]).addTo(map);
+
+            // var circle = L.circle([22.4978734, 103.957908], {
+            //     color: 'red',
+            //     fillColor: '#f03',
+            //     fillOpacity: 0.5,
+            //     radius: 500
+            // }).addTo(map);
+            let polylinePoints = new Array();
+            polylinePoints.push([103.957908, 22.4978735]);
+
+            let polyline = L.polyline(polylinePoints, { color: 'red' }).addTo(map);
+
+            socket.on('new_location', (data) => {
+                const {nextPoint} = data;
+                console.log('next point ', nextPoint);
+                targetPoint.setLatLng({ lon: nextPoint[0], lat: nextPoint[1] });
+                polylinePoints.push(nextPoint);
+                console.log('poly line: ', polylinePoints);
+                polyline.setLatLngs(convertData(polylinePoints));
+            });
+
+            function convertData (points) {
+                let result = new Array();
+                points.forEach(point => {
+                    result.push({ lon: point[0], lat: point[1] });
+                });
+                return result;
+            }
+        </script>
+    </div>
+</body>
+
+</html>
