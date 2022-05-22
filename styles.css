@@ -1,0 +1,30 @@
+body{
+    background-color: darkseagreen;
+}
+.port{
+    font-family:Arial;
+    font-size: large;
+    font-weight: bold;
+}
+.baudrate{
+    font-family: Arial;
+    font-size: large;
+    font-weight: bold;
+}
+.field{
+    width: 350px;
+    position:relative;
+    left: 200px;
+    background-color: rgb(100, 114, 237);
+   
+}
+.name_app{
+    position:relative;
+    text-align:center;
+    font-weight: bolder;
+}
+.map{
+    position: relative;
+    left: 200px;
+    top: 10px;
+}
